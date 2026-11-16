@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 function FilterBar({ options, selected, onSelect }) {
   return (
     <div className="filter-bar">
@@ -13,5 +14,9 @@ function FilterBar({ options, selected, onSelect }) {
     </div>
   );
 }
-
+FilterBar.propTypes = {
+  options: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selected: PropTypes.string.isRequired,
+  onSelect: PropTypes.func.isRequired,
+};
 export default FilterBar;

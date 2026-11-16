@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import ProjectCard from "./ProjectCard";
 
 function ProjectList({ projects }) {
@@ -19,5 +20,12 @@ function ProjectList({ projects }) {
     </div>
   );
 }
-
+ProjectList.propTypes = {
+  projects: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+      title: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+};
 export default ProjectList;
