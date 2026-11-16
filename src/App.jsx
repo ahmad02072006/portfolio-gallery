@@ -1,69 +1,68 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterBar from "./FilterBar";
 import ProjectList from "./ProjectList";
+import Section from "./Section";
+import { weeks, projects } from "./data";
 import "./App.css";
 
-const projects = [
-  {
-    id: 1,
-    title: "Web Programming Class",
-    description:
-      "Collection of my weekly coursework and project submissions from the Web Programming class, built with HTML and CSS.",
-    tech: ["HTML", "CSS"],
-    github: "https://github.com/ahmad02072006/web-programming-class",
-    demo: "https://ahmad02072006.github.io/web-programming-class/",
-  },
-  {
-    id: 2,
-    title: "API Atlas",
-    description:
-      "A travel hub linking four apps: trip planner, weather with travel tips, currency converter and place info. Vanilla JavaScript with a Cloudflare Worker backend.",
-    tech: ["JavaScript", "HTML", "CSS"],
-    github: "https://github.com/ahmad02072006/test-main-2",
-    demo: "https://ahmad02072006.github.io/test-main-2/",
-  },
-  {
-    id: 3,
-    title: "Portfolio",
-    description:
-      "My personal portfolio website, built with plain HTML, CSS and JavaScript.",
-    tech: ["HTML", "CSS", "JavaScript"],
-    github: "https://github.com/ahmad02072006/portfolio",
-    demo: "https://ahmad02072006.github.io/portfolio/",
-  },
-  {
-    id: 4,
-    title: "Book Search",
-    description:
-      "A book finder page where you can search for books.",
-    tech: ["HTML", "JavaScript"],
-    github: "https://github.com/ahmad02072006/webpro-book-search",
-    demo: "https://ahmad02072006.github.io/webpro-book-search/",
-  },
-];
+const allItems = [...weeks, ...projects];
+const filters = ["All", ...new Set(allItems.flatMap((p) => p.tech))];
 
-const filters = ["All", "HTML", "CSS", "JavaScript"];
+function matches(item, selected, query) {
+  const techOk = selected === "All" || item.tech.includes(selected);
+  const q = query.trim().toLowerCase();
+  const textOk =
+    q === "" ||
+    item.title.toLowerCase().includes(q) ||
+    item.description.toLowerCase().includes(q);
+  return techOk && textOk;
+}
 
 function App() {
   const [selected, setSelected] = useState("All");
+  const [query, setQuery] = useState("");
+  const [dark, setDark] = useState(false);
 
-  const visible =
-    selected === "All"
-      ? projects
-      : projects.filter((p) => p.tech.includes(selected));
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+  }, [dark]);
+
+  const visibleWeeks = weeks.filter((w) => matches(w, selected, query));
+  const visibleProjects = projects.filter((p) => matches(p, selected, query));
 
   return (
     <div className="app">
       <header className="hero">
+        <button className="theme-toggle" onClick={() => setDark(!dark)}>
+          {dark ? "Light mode" : "Dark mode"}
+        </button>
         <h1>Ahmad's Portfolio</h1>
-        <p>Web projects I built for my Web Programming class</p>
+        <p>Every week of my Web Programming class, plus my projects, in one place</p>
       </header>
 
+      <input
+        className="search"
+        type="search"
+        placeholder="Search weeks and projects..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+      />
       <FilterBar options={filters} selected={selected} onSelect={setSelected} />
       <p className="count">
-        Showing {visible.length} of {projects.length} projects
+        Showing {visibleWeeks.length + visibleProjects.length} of {allItems.length} items
       </p>
-      <ProjectList projects={visible} />
+
+      <Section title="Course Weeks" subtitle="Open any week's tasks (Weeks 2 to 11)">
+        <ProjectList projects={visibleWeeks} />
+      </Section>
+
+      <Section title="Projects" subtitle="Things I built beyond the weekly tasks">
+        <ProjectList projects={visibleProjects} />
+      </Section>
+
+      <footer className="footer">
+        © 2026 Ahmad · Web Programming K0126_002 · Built with React + Vite
+      </footer>
     </div>
   );
 }
