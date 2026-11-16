@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import FilterBar from "./FilterBar";
 import ProjectList from "./ProjectList";
 import Section from "./Section";
+import ProfileCard from "./ProfileCard";
 import { weeks, projects } from "./data";
 import "./App.css";
 
@@ -39,7 +40,13 @@ function App() {
         <h1>Ahmad's Portfolio</h1>
         <p>Every week of my Web Programming class, plus my projects, in one place</p>
       </header>
-
+      <ProfileCard
+  name="Ochilov Akhmadjon"
+  role="Web Programming student"
+  university="Gachon University"
+  skills={["HTML", "CSS", "JavaScript", "React"]}
+  available={true}
+/>
       <input
         className="search"
         type="search"
